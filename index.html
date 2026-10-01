@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polnische Grammatikübung: W kawiarni (Akkusativ, Genitiv, Instrumental)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .select-custom {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%206b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-right: 2rem;
+        }
+        .transition-all-200 {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col text-slate-800 antialiased">
+
+    <!-- Navigation / Header -->
+    <header class="bg-gradient-to-r from-rose-700 via-red-600 to-amber-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-2xl font-bold border border-white/20">
+                    ☕
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Gramatyka Polska: W kawiarni</h1>
+                    <p class="text-xs sm:text-sm text-rose-100">Interaktiver Lückentext: Akkusativ, Genitiv & Instrumental</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 bg-black/20 backdrop-blur-md rounded-xl p-1.5 border border-white/10 text-xs sm:text-sm">
+                <button id="btn-tab-story" onclick="switchTab('story')" class="px-3 py-1.5 rounded-lg font-medium transition-all-200 bg-white text-rose-800 shadow-sm">
+                    <i class="fa-solid fa-comments mr-1"></i> Dialog Übung
+                </button>
+                <button id="btn-tab-rules" onclick="switchTab('rules')" class="px-3 py-1.5 rounded-lg font-medium transition-all-200 text-white hover:bg-white/10">
+                    <i class="fa-solid fa-graduation-cap mr-1"></i> Ściąga (Regeln)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6 sm:px-6">
+
+        <!-- Scoreboard / Status Widget -->
+        <div id="score-card" class="mb-6 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 transition-all">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <div class="relative flex items-center justify-center">
+                        <svg class="w-16 h-16 transform -rotate-90">
+                            <circle cx="32" cy="32" r="26" stroke="currentColor" stroke-width="6" class="text-slate-100" fill="transparent" />
+                            <circle id="progress-circle" cx="32" cy="32" r="26" stroke="currentColor" stroke-width="6" class="text-emerald-500 transition-all duration-500" stroke-dasharray="163" stroke-dashoffset="163" fill="transparent" />
+                        </svg>
+                        <span id="score-percent" class="absolute text-sm font-bold text-slate-700">0%</span>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-800">Dein Fortschritt</h2>
+                        <p class="text-xs sm:text-sm text-slate-500" id="score-summary">Wähle die korrekte Deklinationsform in den Dropdown-Menüs aus.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                    <button onclick="checkAnswers()" class="flex-1 md:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm hover:shadow transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Überprüfen</span>
+                    </button>
+                    <button onclick="resetExercise()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium px-4 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2" title="Zurücksetzen">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span class="hidden sm:inline">Neustart</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feedback Banner -->
+            <div id="feedback-banner" class="hidden mt-4 p-4 rounded-xl border text-sm flex items-start gap-3">
+                <i id="feedback-icon" class="fa-solid text-lg mt-0.5"></i>
+                <div>
+                    <h4 id="feedback-title" class="font-bold"></h4>
+                    <p id="feedback-text" class="mt-0.5 text-slate-600"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: Dialogue Exercise "W kawiarni" -->
+        <section id="tab-story" class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-8">
+                <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-rose-50 text-rose-700 text-xs font-bold rounded-full mb-2">
+                            Dialog w kawiarni
+                        </span>
+                        <h2 class="text-2xl font-bold text-slate-900">Zamówienie w kawiarni (Bestellung im Café)</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 max-w-xs">
+                        In Anführungszeichen <strong>"..."</strong> steht die Grundform (Nominativ). Wähle die grammatikalisch richtige Form.
+                    </p>
+                </div>
+
+                <div class="space-y-6 text-slate-800 leading-relaxed text-base sm:text-lg">
+                    
+                    <!-- Dialogue 1 -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-rose-50/40 border border-rose-100/80 space-y-3">
+                        <div class="font-bold text-xs uppercase tracking-wider text-rose-800 mb-1 border-b border-rose-200/60 pb-1">
+                            Sytuacja 1: Mami i Angela
+                        </div>
+                        
+                        <div class="flex flex-col gap-2">
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Słucham, co dla pań?</p>
+                            
+                            <p><span class="font-semibold text-slate-900">Mami:</span> Dla mnie 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"deser owocowy"</span>
+                                    <select data-id="q1" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="deser owocowy">deser owocowy</option>
+                                        <option value="deseru owocowego">deseru owocowego</option>
+                                        <option value="deserem owocowym">deserem owocowym</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span> 
+                                z 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"bita śmietana"</span>
+                                    <select data-id="q2" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="bitą śmietaną">bitą śmietaną</option>
+                                        <option value="bitą śmietanę">bitą śmietanę</option>
+                                        <option value="bitej śmietany">bitej śmietany</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>, 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"sernik"</span>
+                                    <select data-id="q3" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="sernik">sernik</option>
+                                        <option value="sernika">sernika</option>
+                                        <option value="sernikiem">sernikiem</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span> 
+                                i 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"gorąca czekolada"</span>
+                                    <select data-id="q4" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="gorącą czekoladę">gorącą czekoladę</option>
+                                        <option value="gorąca czekolada">gorąca czekolada</option>
+                                        <option value="gorącej czekolady">gorącej czekolady</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>.
+                            </p>
+
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> A dla pani?</p>
+
+                            <p><span class="font-semibold text-slate-900">Angela:</span> Ja poproszę 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"szarlotka"</span>
+                                    <select data-id="q5" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="szarlotkę">szarlotkę</option>
+                                        <option value="szarlotka">szarlotka</option>
+                                        <option value="szarlotką">szarlotką</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span> 
+                                na ciepło z 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"lody"</span>
+                                    <select data-id="q6" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="lodami">lodami</option>
+                                        <option value="lody">lody</option>
+                                        <option value="lodów">lodów</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span> 
+                                i 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"biała kawa"</span>
+                                    <select data-id="q7" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="białą kawę">białą kawę</option>
+                                        <option value="biała kawa">biała kawa</option>
+                                        <option value="białej kawy">białej kawy</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>.
+                            </p>
+
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Czy coś jeszcze?</p>
+                            <p><span class="font-semibold text-slate-900">Angela:</span> Nie. To wszystko. Dziękujemy.</p>
+                        </div>
+                    </div>
+
+                    <!-- Dialogue 2 -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-amber-50/40 border border-amber-100/80 space-y-3">
+                        <div class="font-bold text-xs uppercase tracking-wider text-amber-800 mb-1 border-b border-amber-200/60 pb-1">
+                            Sytuacja 2: Klient
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Słucham, co dla pana?</p>
+                            
+                            <p><span class="font-semibold text-slate-900">Klient:</span> Poproszę 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"duże piwo"</span>
+                                    <select data-id="q8" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="duże piwo">duże piwo</option>
+                                        <option value="dużego piwa">dużego piwa</option>
+                                        <option value="dużym piwem">dużym piwem</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>.
+                            </p>
+
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Niestety, nie mamy 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"piwo"</span>
+                                    <select data-id="q9" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="piwa">piwa</option>
+                                        <option value="piwo">piwo</option>
+                                        <option value="piwem">piwem</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>. 
+                                Polecam 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"wyśmienita kawa"</span>
+                                    <select data-id="q10" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="wyśmienitą kawę">wyśmienitą kawę</option>
+                                        <option value="wyśmienita kawa">wyśmienita kawa</option>
+                                        <option value="wyśmienitej kawy">wyśmienitej kawy</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>.
+                            </p>
+
+                            <p><span class="font-semibold text-slate-900">Klient:</span> Dobrze. Poproszę więc 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"kawa ze śmietanką"</span>
+                                    <select data-id="q11" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="kawę ze śmietanką">kawę ze śmietanką</option>
+                                        <option value="kawa ze śmietanką">kawa ze śmietanką</option>
+                                        <option value="kawy ze śmietanką">kawy ze śmietanką</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span> 
+                                i 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"sernik"</span>
+                                    <select data-id="q12" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="sernik">sernik</option>
+                                        <option value="sernika">sernika</option>
+                                        <option value="sernikiem">sernikiem</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>.
+                            </p>
+
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Czy to wszystko?</p>
+                            <p><span class="font-semibold text-slate-900">Klient:</span> Tak, to wszystko.</p>
+                        </div>
+                    </div>
+
+                    <!-- Dialogue 3 -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-sky-50/40 border border-sky-100/80 space-y-3">
+                        <div class="font-bold text-xs uppercase tracking-wider text-sky-800 mb-1 border-b border-sky-200/60 pb-1">
+                            Sytuacja 3: Klientka
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Dzień dobry, co podać?</p>
+
+                            <p><span class="font-semibold text-slate-900">Klientka:</span> Poprosimy trzy razy 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"koktajl truskawkowy"</span>
+                                    <select data-id="q13" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="koktajl truskawkowy">koktajl truskawkowy</option>
+                                        <option value="koktajlu truskawkowego">koktajlu truskawkowego</option>
+                                        <option value="koktajlem truskawkowym">koktajlem truskawkowym</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span> 
+                                i dwa razy 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"koktajl bananowy"</span>
+                                    <select data-id="q14" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="koktajl bananowy">koktajl bananowy</option>
+                                        <option value="koktajlu bananowego">koktajlu bananowego</option>
+                                        <option value="koktajlem bananowym">koktajlem bananowym</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>.
+                            </p>
+
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Czy coś jeszcze?</p>
+
+                            <p><span class="font-semibold text-slate-900">Klientka:</span> Tak, dwa razy 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"lody z owocami i bitą śmietaną"</span>
+                                    <select data-id="q15" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="lody z owocami i bitą śmietaną">lody z owocami i bitą śmietaną</option>
+                                        <option value="lodów z owocami i bitą śmietaną">lodów z owocami i bitą śmietaną</option>
+                                        <option value="lodami z owocami i bitą śmietaną">lodami z owocami i bitą śmietaną</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>, 
+                                dwa razy 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"tiramisu"</span>
+                                    <select data-id="q16" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="tiramisu">tiramisu</option>
+                                        <option value="tiramisuem">tiramisuem</option>
+                                        <option value="tiramisa">tiramisa</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span> 
+                                i raz 
+                                <span class="inline-block my-1">
+                                    <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-1.5 py-0.5 rounded">"sernik"</span>
+                                    <select data-id="q17" class="gap-option select-custom border border-slate-300 rounded-lg px-2 py-1 text-base font-semibold bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                        <option value="">---</option>
+                                        <option value="sernik">sernik</option>
+                                        <option value="sernika">sernika</option>
+                                        <option value="sernikiem">sernikiem</option>
+                                    </select>
+                                    <span class="q-feedback hidden text-sm ml-1 font-medium"></span>
+                                </span>.
+                            </p>
+
+                            <p><span class="font-semibold text-slate-900">Kelnerka:</span> Czy to wszystko?</p>
+                            <p><span class="font-semibold text-slate-900">Klientka:</span> Tak, to już wszystko.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Grammatik-Übersicht (Ściąga) -->
+        <section id="tab-rules" class="hidden space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-8">
+                <div class="border-b border-slate-100 pb-4 mb-6">
+                    <span class="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full mb-2">
+                        Ściąga (Grammatik-Kompendium)
+                    </span>
+                    <h2 class="text-2xl font-bold text-slate-900">Grammatik-Übersicht für Bestellungen</h2>
+                    <p class="text-slate-500 text-sm mt-1">
+                        Übersicht über Akkusativ, Genitiv und Instrumental beim Bestellen von Speisen und Getränken.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Akkusativ Card -->
+                    <div class="border border-emerald-200 bg-emerald-50/30 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-bold text-emerald-900">Biernik (Akkusativ)</h3>
+                                <span class="px-2 py-0.5 text-xs font-bold bg-emerald-100 text-emerald-800 rounded">Kogo? Co?</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mb-4">Nach Verben & Ausdrücken wie <em>dla mnie..., poproszę..., polecam..., poprosimy...</em></p>
+                            
+                            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Wichtige Formen:</h4>
+                            <ul class="text-xs space-y-1.5 text-slate-700">
+                                <li>• <strong>Feminin (-a ➔ -ę / -ą -ę):</strong> szarlotkę, białą kawę, gorącą czekoladę</li>
+                                <li>• <strong>Maskulin leblos (= Nominativ):</strong> deser owocowy, sernik, koktajl</li>
+                                <li>• <strong>Neutrum (= Nominativ):</strong> duże piwo</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-emerald-200 text-xs text-emerald-800 font-medium">
+                            💡 Beispiel: <em>Poproszę szarlotkę i deser.</em>
+                        </div>
+                    </div>
+
+                    <!-- Genitiv Card -->
+                    <div class="border border-amber-200 bg-amber-50/30 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-bold text-amber-900">Dopełniacz (Genitiv)</h3>
+                                <span class="px-2 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded">Kogo? Czego?</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mb-4">Bei Verneinungen (<em>nie mamy...</em>), Mengen (<em>szklanka...</em>) und Präpositionen (<em>bez...</em>).</p>
+                            
+                            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Genitivregel bei Negation:</h4>
+                            <p class="text-xs text-slate-700">Akkusativ wird bei der Verneinung <em>"nie mamy..."</em> stets zum Genitiv!</p>
+                            <ul class="text-xs space-y-1.5 text-slate-700 mt-2">
+                                <li>• Neutrum: piwo ➔ nie mamy <strong>piwa</strong></li>
+                                <li>• Feminin: kawa ➔ nie mamy <strong>kawy</strong></li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-amber-200 text-xs text-amber-800 font-medium">
+                            💡 Beispiel: <em>Nie mamy piwa ani kawy.</em>
+                        </div>
+                    </div>
+
+                    <!-- Instrumental Card -->
+                    <div class="border border-indigo-200 bg-indigo-50/30 rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-bold text-indigo-900">Narzędnik (Instrumental)</h3>
+                                <span class="px-2 py-0.5 text-xs font-bold bg-indigo-100 text-indigo-800 rounded">Z kim? Z czym?</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mb-4">Nach der Präposition <strong>"z" / "ze"</strong> (mit Zutat / Beilage).</p>
+                            
+                            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Wichtige Endungen:</h4>
+                            <ul class="text-xs space-y-1.5 text-slate-700">
+                                <li>• <strong>Feminin Sg. (-ą):</strong> z bitą śmietaną, ze śmietanką</li>
+                                <li>• <strong>Plural (-ami):</strong> z lodami, z owocami</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-indigo-200 text-xs text-indigo-800 font-medium">
+                            💡 Beispiel: <em>Kawa z mlekiem i bita śmietana z owocami.</em>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <p>Interaktive Polnisch-Grammatikübung • Akkusativ (Biernik), Genitiv (Dopełniacz) & Instrumental (Narzędnik)</p>
+    </footer>
+
+    <script>
+        // Data structure containing answers, grammar explanations, and case types
+        const questionsData = {
+            q1: {
+                correct: "deser owocowy",
+                caseName: "Biernik (Akkusativ)",
+                rule: "'Dla mnie' verlangt den Akkusativ. Bei leblosen männlichen Nomen entspricht der Akkusativ dem Nominativ: deser owocowy."
+            },
+            q2: {
+                correct: "bitą śmietaną",
+                caseName: "Narzędnik (Instrumental)",
+                rule: "Die Präposition 'z' (mit) verlangt den Instrumental. Feminin Singular Endung: -ą (bita śmietana ➔ bitą śmietaną)."
+            },
+            q3: {
+                correct: "sernik",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Akkusativ nach 'Dla mnie'. Männlich leblos: sernik bleibt sernik."
+            },
+            q4: {
+                correct: "gorącą czekoladę",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Akkusativ nach 'Dla mnie'. Feminines Adjektiv + Nomen: gorąca czekolada ➔ gorącą czekoladę."
+            },
+            q5: {
+                correct: "szarlotkę",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Das Verb 'poproszę' (ich hätte gerne) verlangt den Akkusativ. Feminin Endung: -ę (szarlotka ➔ szarlotkę)."
+            },
+            q6: {
+                correct: "lodami",
+                caseName: "Narzędnik (Instrumental)",
+                rule: "Präposition 'z' (mit) verlangt den Instrumental. Plural Endung: -ami (lody ➔ lodami)."
+            },
+            q7: {
+                correct: "białą kawę",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Akkusativ nach 'poproszę'. Feminin: biała kawa ➔ białą kawę."
+            },
+            q8: {
+                correct: "duże piwo",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Akkusativ nach 'poproszę'. Bei Neutrum entspricht der Akkusativ dem Nominativ: duże piwo."
+            },
+            q9: {
+                correct: "piwa",
+                caseName: "Dopełniacz (Genitiv)",
+                rule: "Genitivregel bei Negation: Das verneinte Verb 'nie mamy' (wir haben nicht) verlangt IMMER den Genitiv! Neutrum: piwo ➔ piwa."
+            },
+            q10: {
+                correct: "wyśmienitą kawę",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Verb 'polecam' (ich empfehle) verlangt den Akkusativ. Feminin: wyśmienita kawa ➔ wyśmienitą kawę."
+            },
+            q11: {
+                correct: "kawę ze śmietanką",
+                caseName: "Biernik + Narzędnik",
+                rule: "'Poproszę' fordert Akkusativ für 'kawa' (➔ kawę), die Zutat bleibt Instrumental mit 'ze śmietanką'."
+            },
+            q12: {
+                correct: "sernik",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Akkusativ nach 'poproszę'. Männlich leblos: sernik."
+            },
+            q13: {
+                correct: "koktajl truskawkowy",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Nach Zahlenausdrücken wie 'trzy razy' folgt bei der Bestellung das direkte Objekt im Akkusativ: koktajl truskawkowy."
+            },
+            q14: {
+                correct: "koktajl bananowy",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Akkusativ nach 'dwa razy': koktajl bananowy."
+            },
+            q15: {
+                correct: "lody z owocami i bitą śmietaną",
+                caseName: "Biernik + Narzędnik",
+                rule: "'lody' steht im Akkusativ, gefolgt von der Präposition 'z' mit Instrumental (owocami = Plural, bitą śmietaną = Feminin Sg.)."
+            },
+            q16: {
+                correct: "tiramisu",
+                caseName: "Biernik (Unveränderlich)",
+                rule: "'tiramisu' ist ein unveränderliches Fremdwort und behält in allen Fällen dieselbe Form."
+            },
+            q17: {
+                correct: "sernik",
+                caseName: "Biernik (Akkusativ)",
+                rule: "Akkusativ nach 'raz': sernik."
+            }
+        };
+
+        // Switch active tab view
+        function switchTab(tabName) {
+            const tabs = ['story', 'rules'];
+            tabs.forEach(t => {
+                const sec = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`btn-tab-${t}`);
+                if (t === tabName) {
+                    sec.classList.remove('hidden');
+                    btn.className = "px-3 py-1.5 rounded-lg font-medium transition-all-200 bg-white text-rose-800 shadow-sm";
+                } else {
+                    sec.classList.add('hidden');
+                    btn.className = "px-3 py-1.5 rounded-lg font-medium transition-all-200 text-white hover:bg-white/10";
+                }
+            });
+        }
+
+        // Evaluate all dropdown answers
+        function checkAnswers() {
+            let total = Object.keys(questionsData).length;
+            let correctCount = 0;
+            let answeredCount = 0;
+
+            const selects = document.querySelectorAll('.gap-option');
+
+            selects.forEach(select => {
+                const qId = select.getAttribute('data-id');
+                const userVal = select.value.trim();
+                const qInfo = questionsData[qId];
+                
+                const parent = select.parentElement;
+                let feedbackSpan = parent.querySelector('.q-feedback');
+
+                if (!feedbackSpan) {
+                    feedbackSpan = document.createElement('span');
+                    feedbackSpan.className = 'q-feedback text-sm ml-1 font-medium';
+                    parent.appendChild(feedbackSpan);
+                }
+
+                if (userVal !== "") {
+                    answeredCount++;
+                }
+
+                if (userVal === qInfo.correct) {
+                    correctCount++;
+                    select.classList.remove('border-slate-300', 'border-red-500', 'bg-red-50', 'text-red-900');
+                    select.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                    
+                    feedbackSpan.className = 'q-feedback inline-inline-block text-xs font-bold text-emerald-600 ml-1';
+                    feedbackSpan.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+                    feedbackSpan.title = `${qInfo.caseName}: ${qInfo.rule}`;
+                } else if (userVal === "") {
+                    select.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-red-500', 'bg-red-50', 'text-emerald-900', 'text-red-900');
+                    select.classList.add('border-slate-300');
+                    feedbackSpan.className = 'q-feedback hidden';
+                } else {
+                    select.classList.remove('border-slate-300', 'border-emerald-500', 'bg-emerald-50', 'text-emerald-900');
+                    select.classList.add('border-red-500', 'bg-red-50', 'text-red-900');
+                    
+                    feedbackSpan.className = 'q-feedback inline-inline-block text-xs font-medium text-red-600 ml-1';
+                    feedbackSpan.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <span class="hidden sm:inline">(${qInfo.correct})</span>`;
+                    feedbackSpan.title = `Richtig: ${qInfo.correct}. Regel: ${qInfo.rule}`;
+                }
+            });
+
+            // Calculate percentage
+            const percentage = Math.round((correctCount / total) * 100);
+            
+            // Update Scoreboard UI
+            const progressCircle = document.getElementById('progress-circle');
+            const scorePercent = document.getElementById('score-percent');
+            const scoreSummary = document.getElementById('score-summary');
+            
+            const circumference = 163;
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            progressCircle.style.strokeDashoffset = offset;
+            scorePercent.innerText = `${percentage}%`;
+
+            scoreSummary.innerText = `${correctCount} von ${total} Lücken richtig gelöst (${answeredCount} ausgefüllt).`;
+
+            // Display feedback banner
+            const banner = document.getElementById('feedback-banner');
+            const title = document.getElementById('feedback-title');
+            const text = document.getElementById('feedback-text');
+            const icon = document.getElementById('feedback-icon');
+
+            banner.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-amber-50', 'border-amber-200', 'text-amber-900', 'bg-red-50', 'border-red-200', 'text-red-900');
+
+            if (percentage === 100) {
+                banner.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                icon.className = 'fa-solid fa-trophy text-emerald-600 text-xl mt-0.5';
+                title.innerText = "Świetnie! Das ist perfekt!";
+                text.innerText = "Du hast alle 17 Grammatikformen im Dialog 'W kawiarni' fehlerfrei gelöst!";
+            } else if (percentage >= 70) {
+                banner.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-900');
+                icon.className = 'fa-solid fa-thumbs-up text-amber-600 text-xl mt-0.5';
+                title.innerText = "Bardzo dobrze! Sehr gutes Ergebnis!";
+                text.innerText = "Die meisten Formen stimmen. Fahre mit der Maus über die roten Markierungen, um die Erklärungen der Grammatikregeln anzuzeigen.";
+            } else {
+                banner.classList.add('bg-red-50', 'border-red-200', 'text-red-900');
+                icon.className = 'fa-solid fa-book-bookmark text-red-600 text-xl mt-0.5';
+                title.innerText = "Weiter üben!";
+                text.innerText = "Schau in den Tab 'Ściąga (Regeln)', um Akkusativ, Genitiv und Instrumental nachzuschlagen.";
+            }
+        }
+
+        // Reset exercise
+        function resetExercise() {
+            const selects = document.querySelectorAll('.gap-option');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-red-500', 'bg-red-50', 'text-emerald-900', 'text-red-900');
+                select.classList.add('border-slate-300');
+            });
+
+            const feedbacks = document.querySelectorAll('.q-feedback');
+            feedbacks.forEach(f => {
+                f.className = 'q-feedback hidden';
+                f.innerHTML = '';
+            });
+
+            // Reset Scoreboard
+            document.getElementById('progress-circle').style.strokeDashoffset = 163;
+            document.getElementById('score-percent').innerText = "0%";
+            document.getElementById('score-summary').innerText = "Wähle die korrekte Deklinationsform in den Dropdown-Menüs aus.";
+            document.getElementById('feedback-banner').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            console.log("Grammatikübung 'W kawiarni' geladen.");
+        };
+    </script>
+</body>
+</html>
